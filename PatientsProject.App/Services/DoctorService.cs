@@ -17,13 +17,12 @@ public class DoctorService : Service<Doctor>, IService<DoctorRequest, DoctorResp
     {
         return base.Query(isNoTracking)
             .Include(d => d.Branch)
-            .Include(d => d.User) // <--- BU SATIR ŞART
+            .Include(d => d.User)
             .Include(d => d.DoctorPatients)
             .OrderBy(d => d.Id);
     }
     public CommandResponse Create(DoctorRequest request)
     {
-        // Doktor isimsiz olduğu için duplicate check yapmıyoruz.
         var entity = new Doctor
         {
             BranchId = request.BranchId ?? 0,
@@ -53,12 +52,9 @@ public class DoctorService : Service<Doctor>, IService<DoctorRequest, DoctorResp
         if (entity is null)
             return Error("Doctor not found!");
 
-        // StoreService ÖRNEĞİNDEKİ MANTIK:
-        // Doktor silinmeden önce, ara tablodaki (DoctorPatients) kayıtlarını temizle.
-        // NOT: Hata almamak için .ToList() kullanıyoruz.
+
         Delete(entity.DoctorPatients.ToList());
 
-        // Sonra doktoru sil
         Delete(entity);
 
         return Success("Doctor deleted successfully.", entity.Id);
@@ -105,7 +101,6 @@ public class DoctorService : Service<Doctor>, IService<DoctorRequest, DoctorResp
             Branch = d.Branch.Title,
             PatientCount = d.DoctorPatients.Count,
 
-            // --- BU MAPPING YAPILMAZSA HATA ALIRSIN ---
             DoctorName = d.User != null ? d.User.FirstName + " " + d.User.LastName : "No User Info" 
 
         }).ToList();
