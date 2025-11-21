@@ -1,0 +1,60 @@
+@model BranchResponse
+
+@{
+    var containerDivClass = "container";
+    ViewData["Title"] = "Branch Details";
+}
+
+<div class="@containerDivClass">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+</div>
+
+@if (Model is not null)
+{
+    <div class="@containerDivClass">
+        @if (TempData["Message"] is not null)
+        {
+            <p class="text-danger">
+                @TempData["Message"]
+            </p>
+        }
+
+        @* --- TITLE --- *@
+        <div class="row mb-3">
+            <div class="col-2 fw-bold">
+                @Html.DisplayNameFor(model => model.Title)
+            </div>
+            <div class="col-10">
+                @Html.DisplayFor(model => model.Title)
+            </div>
+        </div>
+
+        @* --- DOCTOR COUNT --- *@
+        <div class="row mb-3">
+            <div class="col-2 fw-bold">
+                @Html.DisplayNameFor(model => model.DoctorCount)
+            </div>
+            <div class="col-10">
+                @Html.DisplayFor(model => model.DoctorCount)
+            </div>
+        </div>
+
+        @* --- DOCTORS LIST (Raw HTML) --- *@
+        <div class="row mb-3">
+            <div class="col-2 fw-bold">
+                <b>@Html.DisplayNameFor(model => model.Doctors)</b>
+            </div>
+            <div class="col-10">
+                @* Serviste string.Join("<br>") yaptığımız için Html.Raw kullanıyoruz *@
+                @Html.Raw(Model.Doctors)
+            </div>
+        </div>
+
+        <hr />
+    
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>@@:&nbsp;|&nbsp;
+        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>@@:&nbsp;|&nbsp;
+        <a asp-action="Index">Back to List</a>
+    </div>
+}
